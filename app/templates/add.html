@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>	
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type=text/javascript>
+		$(function() {			
+			$('a#calculate').bind('click', function(){							
+				$.getJSON('http://localhost:5000/calculate', {a: $("input[name='a']").val(), b: $("input[name='b']").val()},
+					function(data) {						
+						$('#result').text(data.result);
+					});				
+			});
+		});
+	</script>	
+</head>
+<body>
+	<p>
+		<input type=text size=5 name=a> +
+		<input type=text size=5 name=b> =
+		<span id=result>?</span>
+	</p>
+	<a href='javascript:void(0)' id=calculate>Calculate!</a>
+
+</body>
+</html>

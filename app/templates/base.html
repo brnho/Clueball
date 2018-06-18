@@ -1,0 +1,100 @@
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type=text/javascript>
+        function set_message_count(n){
+            $('#message_count').text(n);
+            if(n == 0)
+                $('#message_count').css('visibility', 'hidden');
+            else
+                $('#message_count').css('visibility', 'visible');
+                        
+        }
+
+        {%if current_user.is_authenticated%}
+        $(function() {
+            var since = 0;            
+
+            setInterval(function() {
+                $.ajax('{{url_for('notifications')}}?since=' + since).done(
+                    function(notifications) {
+                        //$('#test').text('hello');
+                        for(var i=0; i < notifications.length; i++) {
+                            if(notifications[i].name == 'unread_message_count')
+                                set_message_count(notifications[i].data);
+                            since = notifications[i].timestamp;
+                        }
+                    }
+                );
+            }, 5000);
+        });
+        {%endif%}
+    </script>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+  <span class="navbar-brand"><strong>Clueball</strong></span>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{{url_for('index')}}">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id='test' href="{{url_for('my_groups')}}">My Groups</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{url_for('createGroup')}}">Create Group</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{url_for('explore')}}">Explore Groups</a>
+      </li>
+       <li class="nav-item">
+        <a class="nav-link" href="{{url_for('messages')}}">
+            Messages
+            {%if not current_user.is_anonymous%}
+                {%set new_messages = current_user.new_messages()%}            
+                <span class="badge" id="message_count"
+                style="visibility: {%if new_messages%}visible{%else%}hidden{%endif%};">{{new_messages}}
+                </span>  
+            {%endif%}          
+        </a>
+      </li>      
+      <li class="nav-item">
+        {%if current_user.is_anonymous%}
+        <a class="nav-link" href="{{url_for('login')}}">Login</a>
+        {%else%}
+        <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
+        {%endif%}
+      </li>  
+    </ul>  
+    <form class="form-inline my-2 my-lg-0" action="{{url_for('search')}}", method="get">        
+        {{g.searchForm.q(size=20, class="form-control mr-sm-2", placeholder=g.searchForm.q.label.text)}}       
+    </form>
+  </div>
+</nav>
+
+
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <br>
+            {% for message in messages %}
+                <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}        
+</div>
+
+</body> 
+
+{%block app_content%}
+{%endblock%}

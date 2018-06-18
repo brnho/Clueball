@@ -1,0 +1,119 @@
+{%extends "base.html"%}
+
+{%block app_content%}
+<head>
+	{%import 'bootstrap/wtf.html' as wtf%}
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script type=text/javascript>
+		$(function() {
+			$('#bob').bind('click', function(){
+				$('p#test').append('yahoo');
+			});			
+		});
+	</script>
+	{{moment.include_moment()}}	
+	<title></title>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+	<div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+  		<div class="btn-group mr-2" role="group" aria-label="First group">
+    		<div class="dropdown">
+  				<button class="btn btn-light dropdown-toggle button-inline" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    			View Members/Send a message
+  				</button>
+  				<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+  				{%for member in group.users%}
+    				<a class="dropdown-item" href="{{url_for('send_message', 
+    				recipient=member.username)}}">{{member.username}}</a>
+  				{%endfor%}    		
+  				</div>
+			</div>
+  		</div>
+  		<div class="btn-group mr-2" role="group" aria-label="Second group">  			
+			<div class="dropdown">
+  				<button class="btn btn-light dropdown-toggle button-inline" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    			Add Members
+  				</button>
+  				<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+  					{%for user in users%}
+  					{%if not group.hasMember(user)%}
+    					<a class="dropdown-item" href="{{url_for('add_member', userId=user.id, groupId=group.id)}}">{{user.username}}</a>
+  					{%endif%}
+  					{%endfor%}    		
+  				</div>
+			</div>    		
+  		</div>  		
+	</div>   
+  </div>
+</nav>
+
+	<h2>Welcome to {{group.name}}</h2>
+	
+	<div class="row">
+		<div class="col-md-4">
+			{{wtf.quick_form(postForm)}}
+		</div>
+	</div>	
+	
+	{%for post in posts%}
+	<div class="container">
+		<div class="row justify-content-start">	
+			<div class="list-group"> 	
+				<div class="list-group-item list-group-item-action flex-column align-items-start"
+				style="width: 150%">
+					<div class="d-flex w-100 justify-content-between">						
+						<h5 class="mb-1">{{post.author.username}} <small><i><sup>{{moment(post.timestamp).format('LLL')}}</sup></i></small></h5>						
+						{%if post.author.id == current_user.id%}   
+							<form action="{{url_for('delete', postId=post.id, groupname=group.name)}}", method="post">
+								<button type="submit" class="btn btn-primary btn-sm">Delete Post</button>
+							</form>
+						{%endif%}						
+					</div>					
+					<p class="mb-1">{{post.text}}</p>									
+				</div>
+				{%for comment in post.comments%}
+				<div class="list-group-item list-group-item-action flex-column align-items-start"
+					style="width: 150%">	
+						<div class="d-flex w-100 justify-content-between">	
+							<h5 class="mb-1">{{comment.author.username}}  <small><i><sup>{{moment(comment.timestamp).fromNow()}}</sup></i></small></h5>							
+						</div>							
+						<p class="mb-1">{{comment.text}}</p>										
+					</div>
+				{%endfor%}
+				<!--{%for comment in comments%} 
+				{%if comment.post_id == post.id%}
+					<div class="list-group-item list-group-item-action flex-column align-items-start"
+					style="width: 150%">	
+						<div class="d-flex w-100 justify-content-between">	
+							<h5 class="mb-1">{{comment.author.username}}  <small><i><sup>{{moment(comment.timestamp).fromNow()}}</sup></i></small></h5>							
+						</div>							
+						<p class="mb-1">{{comment.text}}</p>										
+					</div>
+				{%endif%}
+				{%endfor%} -->
+				<div class="list-group-item list-group-item-action flex-column align-items-start"
+				style="width: 150%">
+					<form action="{{url_for('group', groupname=group.name, postId=post.id)}}", method="post">
+						{{commentForm.hidden_tag()}}
+						<div class="form-group row">						
+							<div class = "col-sm-8">
+								{{commentForm.commentText(size=50, class="form-control", placeholder=commentForm.commentText.label.text)}}								
+							</div>
+						</div>
+					</form>
+				</div>				
+			</div>
+		</div>
+	</div><br>		
+	{%endfor%}	
+</body>
+{%endblock%}

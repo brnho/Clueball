@@ -1,0 +1,28 @@
+{%extends "base.html"%}
+
+
+{%block app_content%}
+
+{{moment.include_moment()}}
+
+<h2>Messages</h2>
+
+{%for message in messages%}
+	<div class="container">
+		<div class="row justify-content-start">	
+			<div class="list-group"> 	
+				<div class="list-group-item list-group-item-action flex-column align-items-start"
+				style="width: 150%">
+					<div class="d-flex w-100 justify-content-between">						
+						<h5 class="mb-1">{{message.sender.username}} 
+							<small><i><sup>{{moment(message.timestamp).format('LLL')}}</sup></i></small>		
+						</h5>									
+					</div>					
+					<p class="mb-1">{{message.body}}</p>									
+				</div>				
+			</div>
+		</div>
+	</div><br>		
+{%endfor%}
+
+{%endblock%}

@@ -1,0 +1,26 @@
+{%extends "base.html"%}
+
+{%block app_content%}
+<html>
+	<head>
+		{%import 'bootstrap/wtf.html' as wtf%}
+		<!--<title>Homepage</title>-->		
+	</head>
+	<body>
+		<h2>Welcome, {{current_user.username}}</h2>		
+		
+		<!--
+		<form action="{{url_for('search')}}", method="get">
+			<div class="form-group row">
+				<label for="search" class="col-sm-2 col-form-label">Search for groups</label>
+				<div class = "col-sm-5">
+					{{g.searchForm.q(size=20, class="form-control", placeholder=g.searchForm.q.label.text, id="search")}}
+				</div>
+			</div>
+		</form> -->
+			
+		
+		
+	</body>
+</html>
+{%endblock%}

@@ -1,0 +1,14 @@
+{%extends "base.html"%}
+
+
+{%block app_content%}
+<h2>My Groups</h2>
+
+<ul>
+	{%for group in groups%}
+	<li><a href='{{url_for('group', groupname=group.name)}}'>{{group.name}}</a></li>
+	{%endfor%}
+</ul>
+
+
+{%endblock%}

@@ -1,0 +1,27 @@
+{%extends "base.html"%}
+
+{%block app_content%}
+{%import 'bootstrap/wtf.html' as wtf%}
+<body>
+	<h2>Create Group</h2>
+	<!--
+	<form action="" method="post">
+		{{form.hidden_tag()}}
+		<p>
+			{{form.name.label}}<br>
+			{{form.name(size=64)}}<br>
+			{%for error in form.name.errors%}
+			<span style="color: red;">[{{error}}]</span>
+			{%endfor%}
+		</p>
+		<p>
+			{{form.submit()}}
+		</p> -->
+	</form>
+	<div class="row">
+		<div class="col-md-4">
+			{{wtf.quick_form(form)}}
+		</div>
+	</div>
+</body>
+{%endblock%}

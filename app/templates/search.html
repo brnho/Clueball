@@ -1,0 +1,29 @@
+{%extends "base.html"%}
+
+{%block app_content%}
+<body>
+	<h2>Displaying Search Results for {{data}}</h2>
+
+	<ul>
+	{%for group in groups%}	
+		<li><a href="{{url_for('group', groupname=group.name)}}">{{group.name}}</a></li>	
+	{%endfor%}
+	</ul>
+
+	{%if total==0%}
+	<p>No results found</p>
+	{%endif%}	
+
+	<ul class="pager">
+		{%if prev_url%}
+		<li><a href="{{prev_url}}">Previous results</a></li>
+		{%endif%}
+
+		{%if next_url%}
+		<li><a href="{{next_url}}">Next results</a></li>
+		{%endif%}
+	</ul>
+	
+
+</body>
+{%endblock%}
